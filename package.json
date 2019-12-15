@@ -1,0 +1,36 @@
+{
+  "name": "fjord.js",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "deploy": "tsc && npm run test && npm publish --access public",
+    "watch": "tsc -w",
+    "test": "mocha --bail --exit -r ts-node/register test/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dotvirus/fjord.git"
+  },
+  "keywords": [],
+  "author": "dotvirus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dotvirus/fjord/issues"
+  },
+  "homepage": "https://github.com/dotvirus/fjord#readme",
+  "dependencies": {
+    "@dotvirus/ptree": "^1.5.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3"
+  }
+}
