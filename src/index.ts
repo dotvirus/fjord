@@ -248,9 +248,7 @@ export default class FjordInstance {
       if (result === true) {
         return cb(parent, args, ctx, info);
       } else {
-        throw new Error(
-          result !== undefined ? result.toString() : "BAD_REQUEST"
-        );
+        throw new Error("BAD_REQUEST");
       }
     };
   }
