@@ -2,10 +2,8 @@
   "name": "fjord.js",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "deploy": "tsc && npm run test && npm publish --access public",
     "watch": "tsc -w",
