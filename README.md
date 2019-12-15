@@ -3,15 +3,15 @@
 # Install
 
 ````
-npm i fjord.js
+npm i @dotvirus/fjord
 ```
 
 ```javascript
 // Require
-const fjord = require("fjord.js");
+const fjord = require("@dotvirus/fjord");
 
 // Import
-import Fjord from "fjord.js";
+import Fjord from "@dotvirus/fjord";
 ````
 
 # Basic usage
