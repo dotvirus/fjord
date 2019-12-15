@@ -47,6 +47,13 @@ interface IValidationRule {
   handler: FjordHandler;
 }
 
+type IGraphQLResolverFunction = (
+  parent: any,
+  args: any,
+  ctx: any,
+  info: any
+) => Promise<any>;
+
 export default class FjordInstance {
   options: IFjordOptions;
 
@@ -218,6 +225,30 @@ export default class FjordInstance {
         }
       } catch (error) {
         ctx.throw(500, error);
+      }
+    };
+  }
+
+  graphql(rules: IValidationRule[], cb: IGraphQLResolverFunction) {
+    return async (
+      parent: unknown,
+      args: IObject,
+      ctx: unknown,
+      info: unknown
+    ) => {
+      try {
+        const result = await this.validate(args, rules);
+
+        if (result === true) {
+          return cb(parent, args, ctx, info);
+        } else {
+          throw new Error(
+            result !== undefined ? result.toString() : "BAD_REQUEST"
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        throw new Error("SERVER_ERROR");
       }
     };
   }

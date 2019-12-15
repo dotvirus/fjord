@@ -1,6 +1,6 @@
 {
   "name": "@dotvirus/fjord",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Cool validation for node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
