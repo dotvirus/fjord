@@ -2,6 +2,8 @@ import "mocha";
 import { expect } from "chai";
 import Fjord from "../src/index";
 
+const fjord = new Fjord(/* opts */);
+
 describe("Validate basic objects", () => {
   it("Should be a valid object", async () => {
     let calledAfter = 0;
@@ -45,6 +47,86 @@ describe("Validate basic objects", () => {
     expect(calledAfter).to.equal(2);
     expect(calledSuccess).to.equal(1);
     expect(calledFail).to.equal(0);
+  });
+
+  it("Should check even numbers", async () => {
+    const fjord = new Fjord(/* opts */);
+
+    // Example: Require all numbers to be even
+    const val = await fjord.validate({ a: 2, b: 3 }, [
+      {
+        key: "a",
+        handler: fjord.integer().custom(async i => i % 2 == 0)
+      },
+      {
+        key: "b",
+        handler: fjord.integer().custom(async i => i % 2 == 0)
+      }
+    ]);
+
+    expect(val).to.be.false;
+  });
+
+  it("Should return correct error message", async () => {
+    const fjord = new Fjord(/* opts */);
+
+    {
+      const obj = { a: "str" } as any;
+      const val = await fjord.validate(obj, [
+        {
+          key: "a",
+          handler: fjord.integer("Must be an integer")
+        },
+        {
+          key: "c",
+          handler: fjord
+            .integer()
+            .optional()
+            .default(null)
+        }
+      ]);
+
+      expect(val).to.equal("Must be an integer");
+    }
+
+    {
+      const obj = { a: 4 } as any;
+      const val = await fjord.validate(obj, [
+        {
+          key: "a",
+          handler: fjord.integer("Must be an integer")
+        },
+        {
+          key: "c",
+          handler: fjord
+            .integer()
+            .optional()
+            .default(null)
+        }
+      ]);
+
+      expect(val).to.equal(true);
+      expect(obj.c).to.equal(null);
+    }
+
+    {
+      const val = await fjord.validate({ a: 250, c: 4 }, [
+        {
+          key: "a",
+          handler: fjord.integer("Must be an integer")
+        },
+        {
+          key: "c",
+          handler: fjord
+            .integer()
+            .optional()
+            .default(null)
+            .max(2, "C is too large (max. 2)")
+        }
+      ]);
+
+      expect(val).to.equal("C is too large (max. 2)");
+    }
   });
 
   it("Should be an invalid object", async () => {

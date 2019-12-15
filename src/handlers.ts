@@ -139,14 +139,14 @@ export class FjordNumber extends FjordHandler {
 
 export class FjordInteger extends FjordNumber {
   constructor(err?: number | string) {
-    super();
+    super(err);
     this.rules.push(async (v: number) => isInteger(v) || err || false);
   }
 }
 
 export class FjordFloat extends FjordNumber {
   constructor(err?: number | string) {
-    super();
+    super(err);
     this.rules.push(async (v: number) => isFloat(v) || err || false);
   }
 }
@@ -172,6 +172,15 @@ export class FjordArray extends FjordHandler {
   max(len: number, err?: number | string) {
     this.rules.push(async (v: any[]) => v.length <= len || err || false);
     return this;
+  }
+
+  includes(val: any, err?: number | string) {
+    this.rules.push(async (v: any[]) => v.includes(val) || err || false);
+    return this;
+  }
+
+  contains(val: any, err?: number | string) {
+    return this.includes(val, err);
   }
 
   strings(err?: number | string) {
@@ -240,8 +249,9 @@ export class FjordObject<T = IObject> extends FjordHandler {
 }
 
 export class FjordAny extends FjordHandler {
-  constructor() {
+  constructor(err?: number | string) {
     super();
+    this.rules.push(async (v: any) => v !== undefined || err || false);
   }
 
   equals(val: any, err?: number | string) {

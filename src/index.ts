@@ -153,40 +153,40 @@ export default class FjordInstance {
     }
   }
 
-  string() {
-    return new FjordString();
+  string(err?: number | string) {
+    return new FjordString(err);
   }
 
-  number() {
-    return new FjordNumber();
+  number(err?: number | string) {
+    return new FjordNumber(err);
   }
 
-  integer() {
-    return new FjordInteger();
+  integer(err?: number | string) {
+    return new FjordInteger(err);
   }
 
-  int() {
-    return this.integer();
+  int(err?: number | string) {
+    return this.integer(err);
   }
 
-  float() {
-    return new FjordFloat();
+  float(err?: number | string) {
+    return new FjordFloat(err);
   }
 
-  array() {
-    return new FjordArray();
+  array(err?: number | string) {
+    return new FjordArray(err);
   }
 
-  object() {
-    return new FjordObject();
+  object(err?: number | string) {
+    return new FjordObject(err);
   }
 
-  any() {
-    return new FjordAny();
+  any(err?: number | string) {
+    return new FjordAny(err);
   }
 
-  boolean() {
-    return new FjordBoolean();
+  boolean(err?: number | string) {
+    return new FjordBoolean(err);
   }
 
   connect(rules: IValidationRule[]) {
