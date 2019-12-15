@@ -2,8 +2,6 @@ import "mocha";
 import { expect } from "chai";
 import Fjord from "../src/index";
 
-const fjord = new Fjord(/* opts */);
-
 describe("Validate basic objects", () => {
   it("Should be a valid object", async () => {
     let calledAfter = 0;
