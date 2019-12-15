@@ -236,19 +236,21 @@ export default class FjordInstance {
       ctx: unknown,
       info: unknown
     ) => {
-      try {
-        const result = await this.validate(args, rules);
+      let result = false as boolean | number | string | undefined;
 
-        if (result === true) {
-          return cb(parent, args, ctx, info);
-        } else {
-          throw new Error(
-            result !== undefined ? result.toString() : "BAD_REQUEST"
-          );
-        }
+      try {
+        result = await this.validate(args, rules);
       } catch (error) {
         console.error(error);
         throw new Error("SERVER_ERROR");
+      }
+
+      if (result === true) {
+        return cb(parent, args, ctx, info);
+      } else {
+        throw new Error(
+          result !== undefined ? result.toString() : "BAD_REQUEST"
+        );
       }
     };
   }
