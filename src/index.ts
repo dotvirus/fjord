@@ -11,6 +11,9 @@ import {
   FjordBoolean
 } from "./handlers";
 import { IObject } from "./common";
+import debug from "debug";
+
+const log = debug("fjord");
 
 function normalizeToArray<T>(val: T | T[]) {
   if (Array.isArray(val)) return val;
@@ -104,37 +107,53 @@ export default class FjordInstance {
   private async validateRules(root: IObject, rules: IValidationRule[]) {
     const tree = ptree.from(root);
 
+    log(`Validating object...`);
+
     for (const rule of rules) {
       let value = tree.get(rule.key);
+      log(`Validating key ${rule.key}...`);
 
+      log(`Running before hook...`);
       await this.runBefore(value, rule.key, root, rule.before);
 
+      log(`Checking if ${rule.key} is undefined...`);
       if (value === undefined && !rule.handler.isOptional()) {
+        log(`${rule.key} is undefined & not optional: validation failed...`);
+        log(`Running onFail hook...`);
         await this.options.onFail(value, rule.key, root);
         return false;
       }
 
       if (value === undefined && rule.handler.isOptional()) {
+        log(`${rule.key} is undefined & optional.`);
         if (rule.handler.hasDefault()) {
+          log(`Setting ${rule.key} to default value...`);
           tree.set(rule.key, rule.handler.getDefault(root));
+          log(`Running onDefault hook...`);
           await this.options.onDefault(value, rule.key, root);
         }
         continue;
       }
+
+      log(`${rule.key} is defined.`);
 
       const preTransforms = normalizeToArray(
         this.options.transformBefore
       ).concat(rule.transformBefore || []);
 
       if (preTransforms.length) {
+        log(`${rule.key} pre-transform(s)...`);
         for (const transformer of preTransforms) {
           tree.set(rule.key, await transformer(value, rule.key, root));
         }
         value = tree.get(rule.key);
       }
 
+      log(`Checking rules for ${rule.key}...`);
       const result = await rule.handler.check(value, rule.key, root);
       if (result !== true) {
+        log(`Validation failed for ${rule.key}`);
+        log(`Running onFail hook...`);
         await this.options.onFail(value, rule.key, root);
         return result;
       }
@@ -144,6 +163,7 @@ export default class FjordInstance {
       ).concat(rule.transformAfter || []);
 
       if (postTransforms.length) {
+        log(`${rule.key} post-transform(s)...`);
         for (const transformer of postTransforms) {
           tree.set(rule.key, await transformer(value, rule.key, root));
         }
@@ -153,6 +173,7 @@ export default class FjordInstance {
       await this.runAfter(value, rule.key, root, rule.after);
     }
 
+    log(`Running onSuccess hook...`);
     await this.options.onSuccess(root);
     return true;
   }
@@ -205,11 +226,14 @@ export default class FjordInstance {
         const result = await this.validate(req, rules);
 
         if (result === true) {
+          log(`Validation success, calling next middleware...`);
           return next();
         } else {
-          next(result);
+          log(`Validation fail, calling error middleware...`);
+          return next(result);
         }
       } catch (error) {
+        log(`Validation ERROR, calling error middleware with 500...`);
         console.error(error);
         next(500);
       }
@@ -222,11 +246,14 @@ export default class FjordInstance {
         const result = await this.validate(ctx.req, rules);
 
         if (result === true) {
+          log(`Validation success, calling next middleware...`);
           return next();
         } else {
+          log(`Validation fail, calling error middleware...`);
           ctx.throw(400, result);
         }
       } catch (error) {
+        log(`Validation ERROR, calling error middleware with 500...`);
         ctx.throw(500, error);
       }
     };
@@ -244,13 +271,16 @@ export default class FjordInstance {
       try {
         result = await this.validate(args, rules);
       } catch (error) {
+        log(`Validation ERROR, throwing 500...`);
         console.error(error);
         throw new Error("SERVER_ERROR");
       }
 
       if (result === true) {
+        log(`Validation success, calling resolver...`);
         return cb(parent, args, ctx, info);
       } else {
+        log(`Validation fail, throwing bad request...`);
         throw new Error("BAD_REQUEST");
       }
     };

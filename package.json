@@ -1,6 +1,6 @@
 {
   "name": "@dotvirus/fjord",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Cool validation for node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "deploy": "tsc && npm run test && npm publish --access public",
     "watch": "tsc -w",
-    "test": "mocha --bail --exit -r ts-node/register test/index.ts"
+    "test": "set DEBUG=fjord && mocha --bail --exit -r ts-node/register test/index.ts"
   },
   "repository": {
     "type": "git",
@@ -31,10 +31,12 @@
   },
   "homepage": "https://github.com/dotvirus/fjord#readme",
   "dependencies": {
-    "@dotvirus/ptree": "^1.5.2"
+    "@dotvirus/ptree": "^1.5.2",
+    "debug": "^4.1.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.7",
+    "@types/debug": "^4.1.5",
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",

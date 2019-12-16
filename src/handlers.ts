@@ -1,4 +1,7 @@
 import { RuleFunction, DefaultFunction, IObject } from "./common";
+import debug from "debug";
+
+const log = debug("fjord");
 
 const isString = (v: any) => typeof v == "string";
 const isBoolean = (v: any) => typeof v == "boolean";
@@ -19,9 +22,14 @@ export abstract class FjordHandler {
     root: unknown
   ): Promise<boolean | number | string> {
     for (const rule of this.rules) {
+      log(`  Checking rule for ${key}...`);
       const result = await rule(value, key, root);
-      if (result !== true) return result;
+      if (result !== true) {
+        log(`  Rule failed for ${key}.`);
+        return result;
+      }
     }
+    log(`  ${key} OK.`);
     return true;
   }
 
