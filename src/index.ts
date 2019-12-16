@@ -229,8 +229,8 @@ export default class FjordInstance {
           log(`Validation success, calling next middleware...`);
           return next();
         } else {
-          log(`Validation fail, calling error middleware...`);
-          return next(result);
+          log(`Validation fail: '${result}', calling error middleware...`);
+          return next(result || 400);
         }
       } catch (error) {
         log(`Validation ERROR, calling error middleware with 500...`);
