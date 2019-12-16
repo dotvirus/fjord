@@ -1,9 +1,12 @@
 {
   "name": "@dotvirus/fjord",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Cool validation for node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "deploy": "tsc && npm run test && npm publish --access public",
     "watch": "tsc -w",
@@ -13,7 +16,14 @@
     "type": "git",
     "url": "git+https://github.com/dotvirus/fjord.git"
   },
-  "keywords": [],
+  "keywords": [
+    "validation",
+    "api",
+    "express",
+    "koa",
+    "middleware",
+    "graphql"
+  ],
   "author": "dotvirus",
   "license": "ISC",
   "bugs": {

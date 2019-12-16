@@ -54,11 +54,11 @@ describe("Validate basic objects", () => {
     const val = await fjord.validate({ a: 2, b: 3 }, [
       {
         key: "a",
-        handler: fjord.integer().custom(async i => i % 2 == 0)
+        handler: fjord.integer().custom(i => i % 2 == 0)
       },
       {
         key: "b",
-        handler: fjord.integer().custom(async i => i % 2 == 0)
+        handler: fjord.integer().custom(i => i % 2 == 0)
       }
     ]);
 
@@ -388,16 +388,16 @@ describe("Transforms", async () => {
       await fjord.validate(obj, [
         {
           key: "a",
-          handler: fjord.any().custom(async v => !v.includes(" ")),
-          transformAfter: async v => "cool " + v
+          handler: fjord.any().custom(v => !v.includes(" ")),
+          transformAfter: v => "cool " + v
         },
         {
           key: "b",
-          handler: fjord.integer().custom(async v => v < 10)
+          handler: fjord.integer().custom(v => v < 10)
         },
         {
           key: "c.d.e",
-          handler: fjord.any().custom(async v => !v.includes(" "))
+          handler: fjord.any().custom(v => !v.includes(" "))
         },
         {
           key: "c.d.f",

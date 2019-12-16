@@ -21,13 +21,13 @@ export type TransformFunction = (
   val: any,
   key: string,
   root: unknown
-) => Promise<unknown>;
+) => unknown | Promise<unknown>;
 
 export type VoidFunction = (
   value: unknown,
   key: string,
   root: unknown
-) => Promise<void>;
+) => void | Promise<void>;
 
 export interface IFjordOptions {
   before: VoidFunction;
@@ -36,6 +36,7 @@ export interface IFjordOptions {
   after: VoidFunction;
   onSuccess: (root: unknown) => Promise<void>;
   onFail: VoidFunction;
+  onDefault: VoidFunction;
 }
 
 interface IValidationRule {
@@ -64,7 +65,8 @@ export default class FjordInstance {
       transformAfter: async v => v,
       after: async () => {},
       onSuccess: async () => {},
-      onFail: async () => {}
+      onFail: async () => {},
+      onDefault: async () => {}
     };
     if (opts) Object.assign(this.options, opts);
   }
@@ -115,6 +117,7 @@ export default class FjordInstance {
       if (value === undefined && rule.handler.isOptional()) {
         if (rule.handler.hasDefault()) {
           tree.set(rule.key, rule.handler.getDefault(root));
+          await this.options.onDefault(value, rule.key, root);
         }
         continue;
       }
