@@ -33,31 +33,96 @@ export type VoidFunction = (
 ) => void | Promise<void>;
 
 export interface IFjordOptions {
+  /**
+   * Triggers before applying any transformations or validating rules
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
+   */
   before: VoidFunction;
+  /**
+   * Transforms the value before validating rules
+   * @param val Value to transform
+   * @param key Key of the value
+   * @param root Origin object e.g. req
+   */
   transformBefore: TransformFunction | TransformFunction[];
+  /**
+   * Transforms the value after validating rules
+   * @param val Value to transform
+   * @param key Key of the value
+   * @param root Origin object e.g. req
+   */
   transformAfter: TransformFunction | TransformFunction[];
+  /**
+   * Triggers after applying transformations and validating rules
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
+   */
   after: VoidFunction;
+  /**
+   * Triggers whenever validation fully succeeds
+   * @param root Origin object e.g. req
+   */
   onSuccess: (root: unknown) => Promise<void>;
+  /**
+   * Triggers whenever validation fails
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
+   */
   onFail: VoidFunction;
+  /**
+   * Triggers whenever a default value is set for the property
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
+   */
   onDefault: VoidFunction;
 }
 
 interface IValidationRule {
+  /**
+   * Object property
+   */
   key: string;
+  /**
+   * Triggers before applying any transformations or validating rules
+   */
   before?: VoidFunction;
+  /**
+   * Transforms the value before validating rules
+   */
   transformBefore?: TransformFunction | TransformFunction[];
+  /**
+   * Transforms the value after validating rules
+   */
   transformAfter?: TransformFunction | TransformFunction[];
+  /**
+   * Triggers after applying transformations and validating rules
+   */
   after?: VoidFunction;
+  /**
+   * Rule chaining
+   */
   handler: FjordHandler;
 }
 
-type IGraphQLResolverFunction = (
+/**
+ * GraphQL Resolver function
+ * https://graphql.org/learn/execution/#root-fields-resolvers
+ */
+type IGraphQLResolver = (
   parent: any,
   args: any,
   ctx: any,
   info: any
 ) => Promise<any>;
 
+/**
+ * Main class
+ */
 export default class FjordInstance {
   options: IFjordOptions;
 
@@ -184,42 +249,84 @@ export default class FjordInstance {
     }
   }
 
+  /**
+   * Requires the property to be a string
+   * @param err String or number that will be returned on fail
+   */
   string(err?: number | string) {
     return new FjordString(err);
   }
 
+  /**
+   * Requires the property to be a number
+   * @param err String or number that will be returned on fail
+   */
   number(err?: number | string) {
     return new FjordNumber(err);
   }
 
+  /**
+   * Requires the property to be an integer
+   * @param err String or number that will be returned on fail
+   */
   integer(err?: number | string) {
     return new FjordInteger(err);
   }
 
+  /**
+   * Requires the property to be an int. Alternative to integer
+   * @param err String or number that will be returned on fail
+   */
   int(err?: number | string) {
     return this.integer(err);
   }
 
+  /**
+   * Requires the property to be a float
+   * @param err String or number that will be returned on fail
+   */
   float(err?: number | string) {
     return new FjordFloat(err);
   }
 
+  /**
+   * Requires the property to be an array
+   * @param err String or number that will be returned on fail
+   */
   array(err?: number | string) {
     return new FjordArray(err);
   }
 
+  /**
+   * Requires the property to be an object
+   * @param err String or number that will be returned on fail
+   */
   object(err?: number | string) {
     return new FjordObject(err);
   }
 
+  /**
+   * Requires to property to be anything
+   * @param err String or number that will be returned on fail
+   */
   any(err?: number | string) {
     return new FjordAny(err);
   }
 
+  /**
+   * Requires the property to be a boolean
+   * @param err String or number that will be returned on fail
+   */
   boolean(err?: number | string) {
     return new FjordBoolean(err);
   }
 
+  /**
+   * Connect style middleware
+   * https://github.com/senchalabs/connect
+   * https://expressjs.com/
+   * @param rules Array of rules that should be checked
+   */
   connect(rules: IValidationRule[]) {
     return async (req: any, res: any, next: Function) => {
       try {
@@ -240,6 +347,11 @@ export default class FjordInstance {
     };
   }
 
+  /**
+   * Koa style middleware
+   * https://koajs.com/
+   * @param rules Array of rules that should be checked
+   */
   koa(rules: IValidationRule[]) {
     return async (ctx: any, next: any) => {
       try {
@@ -259,7 +371,13 @@ export default class FjordInstance {
     };
   }
 
-  graphql(rules: IValidationRule[], cb: IGraphQLResolverFunction) {
+  /**
+   * Function to validate GraphQL arguments
+   * https://graphql.org/
+   * @param rules Array of rules that should be checked
+   * @param cb Resolver function (executed after successful validation)
+   */
+  graphql(rules: IValidationRule[], cb: IGraphQLResolver) {
     return async (
       parent: unknown,
       args: IObject,
