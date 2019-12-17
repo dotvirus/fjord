@@ -33,20 +33,57 @@ export type VoidFunction = (
 ) => void | Promise<void>;
 
 export interface IFjordOptions {
+  /**
+   * Triggers before applying any transformations or validating rules
+   */
   before: VoidFunction;
+  /**
+   * Transforms the value before validating rules
+   */
   transformBefore: TransformFunction | TransformFunction[];
+  /**
+   * Transforms the value after validating rules
+   */
   transformAfter: TransformFunction | TransformFunction[];
+  /**
+   * Triggers after applying transformations and validating rules
+   */
   after: VoidFunction;
+  /**
+   * Triggers whenever a validation succeeds
+   * @param root Origin object e.g. req
+   */
   onSuccess: (root: unknown) => Promise<void>;
+  /**
+   * Triggers whenever a validation fails
+   */
   onFail: VoidFunction;
+  /**
+   * Triggers whenever a default value is set for the property
+   */
   onDefault: VoidFunction;
 }
 
 interface IValidationRule {
+  /**
+   * Object property
+   */
   key: string;
+  /**
+   * Triggers before applying any transformations or validating rules
+   */
   before?: VoidFunction;
+  /**
+   * Transforms the value before validating rules
+   */
   transformBefore?: TransformFunction | TransformFunction[];
+  /**
+   * Transforms the value after validating rules
+   */
   transformAfter?: TransformFunction | TransformFunction[];
+  /**
+   * Triggers after applying transformations and validating rules
+   */
   after?: VoidFunction;
   handler: FjordHandler;
 }
@@ -184,42 +221,82 @@ export default class FjordInstance {
     }
   }
 
+  /**
+   * Requires the key to be a string
+   * @param err String or number that will be returned on fail
+   */
   string(err?: number | string) {
     return new FjordString(err);
   }
 
+  /**
+   * Requires the key to be a number
+   * @param err String or number that will be returned on fail
+   */
   number(err?: number | string) {
     return new FjordNumber(err);
   }
 
+  /**
+   * Requires the key to be an integer
+   * @param err String or number that will be returned on fail
+   */
   integer(err?: number | string) {
     return new FjordInteger(err);
   }
 
+  /**
+   * Requires the key to be an int. Alternative to integer
+   * @param err String or number that will be returned on fail
+   */
   int(err?: number | string) {
     return this.integer(err);
   }
 
+  /**
+   * Requires the key to be a float
+   * @param err String or number that will be returned on fail
+   */
   float(err?: number | string) {
     return new FjordFloat(err);
   }
 
+  /**
+   * Requires the key to be an array
+   * @param err String or number that will be returned on fail
+   */
   array(err?: number | string) {
     return new FjordArray(err);
   }
 
+  /**
+   * Requires the key to be an object
+   * @param err String or number that will be returned on fail
+   */
   object(err?: number | string) {
     return new FjordObject(err);
   }
 
+  /**
+   * Requires to key to be anything
+   * @param err String or number that will be returned on fail
+   */
   any(err?: number | string) {
     return new FjordAny(err);
   }
 
+  /**
+   * Requires the key to be a boolean
+   * @param err String or number that will be returned on fail
+   */
   boolean(err?: number | string) {
     return new FjordBoolean(err);
   }
 
+  /**
+   * Connect style requests
+   * @param rules Array of rules that should be checked
+   */
   connect(rules: IValidationRule[]) {
     return async (req: any, res: any, next: Function) => {
       try {
@@ -240,6 +317,10 @@ export default class FjordInstance {
     };
   }
 
+  /**
+   * Koa style requests
+   * @param rules Array of rules that should be checked
+   */
   koa(rules: IValidationRule[]) {
     return async (ctx: any, next: any) => {
       try {
@@ -259,6 +340,11 @@ export default class FjordInstance {
     };
   }
 
+  /**
+   * GraphQL style requests
+   * @param rules Array of rules that should be checked
+   * @param cb Gets executed after successful validation
+   */
   graphql(rules: IValidationRule[], cb: IGraphQLResolverFunction) {
     return async (
       parent: unknown,
@@ -286,3 +372,10 @@ export default class FjordInstance {
     };
   }
 }
+
+let b = new FjordInstance();
+b.connect([
+  {
+    handler: b.string().
+  }
+]);
