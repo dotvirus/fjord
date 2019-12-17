@@ -109,6 +109,14 @@ export class FjordString extends FjordHandler {
     this.rules.push(func);
     return this;
   }
+  
+  /**
+   * Checks if the string has length > 0
+   * @param err String or number that will be returned on fail
+   */
+  notEmpty(err?: number | string) {
+    return this.min(1, err);
+  }
 
   /**
    * Checks if the string has a certain minimum length
