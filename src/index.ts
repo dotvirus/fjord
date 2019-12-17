@@ -35,31 +35,49 @@ export type VoidFunction = (
 export interface IFjordOptions {
   /**
    * Triggers before applying any transformations or validating rules
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
    */
   before: VoidFunction;
   /**
    * Transforms the value before validating rules
+   * @param val Value to transform
+   * @param key Key of the value
+   * @param root Origin object e.g. req
    */
   transformBefore: TransformFunction | TransformFunction[];
   /**
    * Transforms the value after validating rules
+   * @param val Value to transform
+   * @param key Key of the value
+   * @param root Origin object e.g. req
    */
   transformAfter: TransformFunction | TransformFunction[];
   /**
    * Triggers after applying transformations and validating rules
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
    */
   after: VoidFunction;
   /**
-   * Triggers whenever a validation succeeds
+   * Triggers whenever validation fully succeeds
    * @param root Origin object e.g. req
    */
   onSuccess: (root: unknown) => Promise<void>;
   /**
-   * Triggers whenever a validation fails
+   * Triggers whenever validation fails
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
    */
   onFail: VoidFunction;
   /**
    * Triggers whenever a default value is set for the property
+   * @param value Value that failed the validation
+   * @param key Key that failed the validation
+   * @param root Origin object e.g. req
    */
   onDefault: VoidFunction;
 }
@@ -85,16 +103,26 @@ interface IValidationRule {
    * Triggers after applying transformations and validating rules
    */
   after?: VoidFunction;
+  /**
+   * Rule chaining
+   */
   handler: FjordHandler;
 }
 
-type IGraphQLResolverFunction = (
+/**
+ * GraphQL Resolver function
+ * https://graphql.org/learn/execution/#root-fields-resolvers
+ */
+type IGraphQLResolver = (
   parent: any,
   args: any,
   ctx: any,
   info: any
 ) => Promise<any>;
 
+/**
+ * Main class
+ */
 export default class FjordInstance {
   options: IFjordOptions;
 
@@ -222,7 +250,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be a string
+   * Requires the property to be a string
    * @param err String or number that will be returned on fail
    */
   string(err?: number | string) {
@@ -230,7 +258,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be a number
+   * Requires the property to be a number
    * @param err String or number that will be returned on fail
    */
   number(err?: number | string) {
@@ -238,7 +266,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be an integer
+   * Requires the property to be an integer
    * @param err String or number that will be returned on fail
    */
   integer(err?: number | string) {
@@ -246,7 +274,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be an int. Alternative to integer
+   * Requires the property to be an int. Alternative to integer
    * @param err String or number that will be returned on fail
    */
   int(err?: number | string) {
@@ -254,7 +282,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be a float
+   * Requires the property to be a float
    * @param err String or number that will be returned on fail
    */
   float(err?: number | string) {
@@ -262,7 +290,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be an array
+   * Requires the property to be an array
    * @param err String or number that will be returned on fail
    */
   array(err?: number | string) {
@@ -270,7 +298,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be an object
+   * Requires the property to be an object
    * @param err String or number that will be returned on fail
    */
   object(err?: number | string) {
@@ -278,7 +306,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires to key to be anything
+   * Requires to property to be anything
    * @param err String or number that will be returned on fail
    */
   any(err?: number | string) {
@@ -286,7 +314,7 @@ export default class FjordInstance {
   }
 
   /**
-   * Requires the key to be a boolean
+   * Requires the property to be a boolean
    * @param err String or number that will be returned on fail
    */
   boolean(err?: number | string) {
@@ -294,7 +322,9 @@ export default class FjordInstance {
   }
 
   /**
-   * Connect style requests
+   * Connect style middleware
+   * https://github.com/senchalabs/connect
+   * https://expressjs.com/
    * @param rules Array of rules that should be checked
    */
   connect(rules: IValidationRule[]) {
@@ -318,7 +348,8 @@ export default class FjordInstance {
   }
 
   /**
-   * Koa style requests
+   * Koa style middleware
+   * https://koajs.com/
    * @param rules Array of rules that should be checked
    */
   koa(rules: IValidationRule[]) {
@@ -341,11 +372,12 @@ export default class FjordInstance {
   }
 
   /**
-   * GraphQL style requests
+   * Function to validate GraphQL arguments
+   * https://graphql.org/
    * @param rules Array of rules that should be checked
-   * @param cb Gets executed after successful validation
+   * @param cb Resolver function (executed after successful validation)
    */
-  graphql(rules: IValidationRule[], cb: IGraphQLResolverFunction) {
+  graphql(rules: IValidationRule[], cb: IGraphQLResolver) {
     return async (
       parent: unknown,
       args: IObject,
