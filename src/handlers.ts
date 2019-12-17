@@ -75,6 +75,10 @@ export class FjordString extends FjordHandler {
     return this;
   }
 
+  notEmpty(err?: number | string) {
+    return this.min(1, err);
+  }
+
   min(len: number, err?: number | string) {
     this.rules.push(async (v: string) => v.length >= len || err || false);
     return this;
