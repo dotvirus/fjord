@@ -372,10 +372,3 @@ export default class FjordInstance {
     };
   }
 }
-
-let b = new FjordInstance();
-b.connect([
-  {
-    handler: b.string().
-  }
-]);
