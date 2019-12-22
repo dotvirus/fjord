@@ -1,6 +1,6 @@
 {
   "name": "@dotvirus/fjord",
-  "version": "0.2.5",
+  "version": "0.4.0",
   "description": "Cool validation for node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/dotvirus/fjord#readme",
   "dependencies": {
-    "@dotvirus/ptree": "^1.5.2",
+    "@dotvirus/ptree": "^2.1.0",
     "debug": "^4.1.1"
   },
   "devDependencies": {
