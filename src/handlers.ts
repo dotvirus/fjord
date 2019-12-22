@@ -105,11 +105,12 @@ export class FjordString extends FjordHandler {
    * Store a custom function to check with
    * @param func Function to execute
    */
-  custom(func: RuleFunction<string>) {
-    this.rules.push(func);
+  custom(func: RuleFunction<string> | RuleFunction<string>[]) {
+    if (Array.isArray(func)) this.rules.push(...func);
+    else this.rules.push(func);
     return this;
   }
-  
+
   /**
    * Checks if the string has length > 0
    * @param err String or number that will be returned on fail
@@ -162,8 +163,9 @@ export class FjordBoolean extends FjordHandler {
    * Store a custom function to check with
    * @param func Function to execute
    */
-  custom(func: RuleFunction<boolean>) {
-    this.rules.push(func);
+  custom(func: RuleFunction<boolean> | RuleFunction<boolean>[]) {
+    if (Array.isArray(func)) this.rules.push(...func);
+    else this.rules.push(func);
     return this;
   }
 
@@ -219,8 +221,9 @@ export class FjordNumber extends FjordHandler {
    * Store a custom function to check with
    * @param func Function to execute
    */
-  custom(func: RuleFunction<number>) {
-    this.rules.push(func);
+  custom(func: RuleFunction<number> | RuleFunction<number>[]) {
+    if (Array.isArray(func)) this.rules.push(...func);
+    else this.rules.push(func);
     return this;
   }
 
@@ -268,7 +271,7 @@ export class FjordFloat extends FjordNumber {
 /**
  * Array factory
  */
-export class FjordArray extends FjordHandler {
+export class FjordArray<T = any> extends FjordHandler {
   of = this;
 
   constructor(err?: number | string) {
@@ -280,8 +283,9 @@ export class FjordArray extends FjordHandler {
    * Store a custom function to check with
    * @param func Function to execute
    */
-  custom(func: RuleFunction<any[]>) {
-    this.rules.push(func);
+  custom(func: RuleFunction<T[]> | RuleFunction<T[]>[]) {
+    if (Array.isArray(func)) this.rules.push(...func);
+    else this.rules.push(func);
     return this;
   }
 
@@ -291,7 +295,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   min(len: number, err?: number | string) {
-    this.rules.push((v: any[]) => v.length >= len || err || false);
+    this.rules.push((v: T[]) => v.length >= len || err || false);
     return this;
   }
 
@@ -301,7 +305,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   max(len: number, err?: number | string) {
-    this.rules.push((v: any[]) => v.length <= len || err || false);
+    this.rules.push((v: T[]) => v.length <= len || err || false);
     return this;
   }
 
@@ -310,8 +314,8 @@ export class FjordArray extends FjordHandler {
    * @param val Value to check
    * @param err String or number that will be returned on fail
    */
-  includes(val: any, err?: number | string) {
-    this.rules.push((v: any[]) => v.includes(val) || err || false);
+  includes(val: T, err?: number | string) {
+    this.rules.push((v: T[]) => v.includes(val) || err || false);
     return this;
   }
 
@@ -320,7 +324,7 @@ export class FjordArray extends FjordHandler {
    * @param val Value to check
    * @param err String or number that will be returned on fail
    */
-  contains(val: any, err?: number | string) {
+  contains(val: T, err?: number | string) {
     return this.includes(val, err);
   }
 
@@ -329,7 +333,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   strings(err?: number | string) {
-    this.rules.push((v: any[]) => v.every(isString) || err || false);
+    this.rules.push((v: T[]) => v.every(isString) || err || false);
     return this;
   }
 
@@ -338,7 +342,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   numbers(err?: number | string) {
-    this.rules.push((v: any[]) => v.every(isNumber) || err || false);
+    this.rules.push((v: T[]) => v.every(isNumber) || err || false);
     return this;
   }
 
@@ -347,7 +351,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   integers(err?: number | string) {
-    this.rules.push((v: any[]) => v.every(isInteger) || err || false);
+    this.rules.push((v: T[]) => v.every(isInteger) || err || false);
     return this;
   }
 
@@ -356,7 +360,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   floats(err?: number | string) {
-    this.rules.push((v: any[]) => v.every(isFloat) || err || false);
+    this.rules.push((v: T[]) => v.every(isFloat) || err || false);
     return this;
   }
 
@@ -365,7 +369,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   arrays(err?: number | string) {
-    this.rules.push((v: any[]) => v.every(i => isArray(i)) || err || false);
+    this.rules.push((v: T[]) => v.every(i => isArray(i)) || err || false);
     return this;
   }
 
@@ -374,7 +378,7 @@ export class FjordArray extends FjordHandler {
    * @param err String or number that will be returned on fail
    */
   objects(err?: number | string) {
-    this.rules.push((v: any[]) => v.every(i => isObject(i)) || err || false);
+    this.rules.push((v: T[]) => v.every(i => isObject(i)) || err || false);
     return this;
   }
 
@@ -383,8 +387,8 @@ export class FjordArray extends FjordHandler {
    * @param func Predicate
    * @param err String or number that will be returned on fail
    */
-  every(func: (i: any) => boolean, err?: number | string) {
-    this.rules.push((v: any[]) => v.every(func) || err || false);
+  every(func: (i: T) => boolean, err?: number | string) {
+    this.rules.push((v: T[]) => v.every(func) || err || false);
     return this;
   }
 
@@ -393,8 +397,8 @@ export class FjordArray extends FjordHandler {
    * @param func Predicate
    * @param err String or number that will be returned on fail
    */
-  some(func: (i: any) => boolean, err?: number | string) {
-    this.rules.push((v: any[]) => v.some(func) || err || false);
+  some(func: (i: T) => boolean, err?: number | string) {
+    this.rules.push((v: T[]) => v.some(func) || err || false);
     return this;
   }
 
@@ -403,7 +407,7 @@ export class FjordArray extends FjordHandler {
    * @param func Predicate
    * @param err String or number that will be returned on fail
    */
-  all(func: (i: any) => boolean, err?: number | string) {
+  all(func: (i: T) => boolean, err?: number | string) {
     return this.every(func, err);
   }
 
@@ -412,7 +416,7 @@ export class FjordArray extends FjordHandler {
    * @param func Predicate
    * @param err String or number that will be returned on fail
    */
-  any(func: (i: any) => boolean, err?: number | string) {
+  any(func: (i: T) => boolean, err?: number | string) {
     return this.some(func, err);
   }
 }
@@ -430,8 +434,9 @@ export class FjordObject<T = IObject> extends FjordHandler {
    * Store a custom function to check with
    * @param func Function to execute
    */
-  custom(func: RuleFunction<T>) {
-    this.rules.push(func);
+  custom(func: RuleFunction<T> | RuleFunction<T>[]) {
+    if (Array.isArray(func)) this.rules.push(...func);
+    else this.rules.push(func);
     return this;
   }
 }
@@ -459,8 +464,9 @@ export class FjordAny extends FjordHandler {
    * Store a custom function to check with
    * @param func Function to execute
    */
-  custom(func: RuleFunction<any[]>) {
-    this.rules.push(func);
+  custom(func: RuleFunction<any> | RuleFunction<any>[]) {
+    if (Array.isArray(func)) this.rules.push(...func);
+    else this.rules.push(func);
     return this;
   }
 }

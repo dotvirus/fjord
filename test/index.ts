@@ -1,6 +1,7 @@
 import "mocha";
 import { expect } from "chai";
 import Fjord from "../src/index";
+import { FjordArray } from "../src/handlers";
 
 describe("Validate basic objects", () => {
   it("Should be a valid object", async () => {
@@ -293,7 +294,7 @@ describe("Validate basic objects", () => {
       await fjord.validate({ a: ["1", "string", "3"] }, [
         {
           key: "a",
-          handler: fjord.array().of.strings()
+          handler: (<FjordArray<string>>fjord.array()).of.strings()
         }
       ])
     ).to.equal(true);
@@ -302,7 +303,7 @@ describe("Validate basic objects", () => {
       await fjord.validate({ a: [1, 2, 3] }, [
         {
           key: "a",
-          handler: fjord.array().of.integers()
+          handler: (<FjordArray<number>>fjord.array()).of.integers()
         }
       ])
     ).to.equal(true);
@@ -311,7 +312,7 @@ describe("Validate basic objects", () => {
       await fjord.validate({ a: [1, "string", 3] }, [
         {
           key: "a",
-          handler: fjord.array().of.integers()
+          handler: (<FjordArray<number>>fjord.array()).of.integers()
         }
       ])
     ).to.equal(false);
@@ -324,9 +325,8 @@ describe("Validate basic objects", () => {
       await fjord.validate({ a: [2, 5, 7] }, [
         {
           key: "a",
-          handler: fjord
-            .array()
-            .of.integers()
+          handler: (<FjordArray<number>>fjord.array()).of
+            .integers()
             .some(i => i > 10)
         }
       ])
@@ -336,9 +336,8 @@ describe("Validate basic objects", () => {
       await fjord.validate({ a: [2, 5, 20] }, [
         {
           key: "a",
-          handler: fjord
-            .array()
-            .of.integers()
+          handler: (<FjordArray<number>>fjord.array()).of
+            .integers()
             .some(i => i > 10)
         }
       ])
@@ -348,9 +347,8 @@ describe("Validate basic objects", () => {
       await fjord.validate({ a: [2, 5, 20] }, [
         {
           key: "a",
-          handler: fjord
-            .array()
-            .of.integers()
+          handler: (<FjordArray<number>>fjord.array()).of
+            .integers()
             .every(i => i > 10)
         }
       ])
