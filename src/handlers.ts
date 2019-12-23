@@ -1,5 +1,6 @@
 import { RuleFunction, DefaultFunction, IObject } from "./common";
 import debug from "debug";
+import PTree from "@dotvirus/ptree";
 
 const log = debug("fjord");
 
@@ -8,7 +9,8 @@ const isBoolean = (v: any) => typeof v == "boolean";
 const isNumber = (v: any) => typeof v == "number";
 const isInteger = (v: any) => Number.isInteger(v);
 const isFloat = (v: any) => Number(v) === v && v % 1 !== 0;
-const isObject = (v: any) => typeof v == "object" && v !== null;
+const isObject = (v: any) =>
+  typeof v == "object" && v !== null && !Array.isArray(v);
 const isArray = (v: any) => Array.isArray(v);
 
 /**
@@ -86,9 +88,13 @@ export abstract class FjordHandler {
  * String factory
  */
 export class FjordString extends FjordHandler {
-  constructor(err?: number | string) {
+  constructor(nullable?: boolean, err?: number | string) {
     super();
-    this.rules.push(v => isString(v) || err || false);
+    if (nullable) {
+      this.rules.push(v => isString(v) || v === null || err || false);
+    } else {
+      this.rules.push(v => isString(v) || err || false);
+    }
   }
 
   /**
@@ -117,6 +123,16 @@ export class FjordString extends FjordHandler {
    */
   notEmpty(err?: number | string) {
     return this.min(1, err);
+  }
+
+  /**
+   * Checks the length of the string
+   * @param min Minimum length
+   * @param max Maximum length
+   * @param err String or number that will be returned on fail
+   */
+  len(min: number, max: number, err: number | string) {
+    return this.min(min, err).max(max, err);
   }
 
   /**
@@ -428,6 +444,19 @@ export class FjordObject<T = IObject> extends FjordHandler {
   constructor(err?: number | string) {
     super();
     this.rules.push((v: T) => isObject(v) || err || false);
+  }
+
+  /**
+   * Check if the object has some deep property
+   * @param str Dot-notation key to check
+   * @param err String or number that will be returned on fail
+   */
+  hasDeepProperty(str: string, err?: number | string) {
+    this.rules.push((v: T) => {
+      // @ts-ignore
+      const prop = PTree.from(v).get(str);
+      return prop !== undefined;
+    });
   }
 
   /**

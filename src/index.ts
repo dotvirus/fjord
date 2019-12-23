@@ -1,4 +1,4 @@
-import ptree from "@dotvirus/ptree";
+import PTree from "@dotvirus/ptree";
 import {
   FjordHandler,
   FjordFloat,
@@ -170,7 +170,7 @@ export default class FjordInstance {
   }
 
   private async validateRules(root: IObject, rules: IValidationRule[]) {
-    const tree = ptree.from(root);
+    const tree = PTree.from(root);
 
     log(`Validating object...`);
 
@@ -253,8 +253,8 @@ export default class FjordInstance {
    * Requires the property to be a string
    * @param err String or number that will be returned on fail
    */
-  string(err?: number | string) {
-    return new FjordString(err);
+  string(nullable?: boolean, err?: number | string) {
+    return new FjordString(nullable, err);
   }
 
   /**
