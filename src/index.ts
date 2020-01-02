@@ -200,6 +200,26 @@ export default class FjordInstance {
         continue;
       }
 
+      log(`Checking if ${rule.key} is null & nullable...`);
+
+      if (value === null && !rule.handler.isNullable()) {
+        log(`${rule.key} is null & not nullable: validation failed...`);
+        log(`Running onFail hook...`);
+        await this.options.onFail(value, rule.key, root);
+        return false;
+      }
+
+      if (value === null && rule.handler.isNullable()) {
+        log(`${rule.key} is null & nullable.`);
+        if (rule.handler.hasDefault()) {
+          log(`Setting ${rule.key} to default value...`);
+          tree.set(rule.key, rule.handler.getDefault(root));
+          log(`Running onDefault hook...`);
+          await this.options.onDefault(value, rule.key, root);
+        }
+        continue;
+      }
+
       log(`${rule.key} is defined.`);
 
       const preTransforms = normalizeToArray(
@@ -253,8 +273,8 @@ export default class FjordInstance {
    * Requires the property to be a string
    * @param err String or number that will be returned on fail
    */
-  string(nullable?: boolean, err?: number | string) {
-    return new FjordString(nullable, err);
+  string(err?: number | string) {
+    return new FjordString(err);
   }
 
   /**
