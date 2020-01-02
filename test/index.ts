@@ -287,6 +287,36 @@ describe("Validate basic objects", () => {
     expect(calledFail).to.equal(0);
   });
 
+  it("Basic checks", async () => {
+    const fjord = new Fjord();
+
+    expect(
+      await fjord.validate({ a: null, b: "test" }, [
+        {
+          key: "a",
+          handler: fjord.string().nullable()
+        },
+        {
+          key: "b",
+          handler: fjord.string().nullable()
+        }
+      ])
+    ).to.be.true;
+
+    expect(
+      await fjord.validate({ b: null }, [
+        {
+          key: "b",
+          handler: fjord.string().nullable()
+        },
+        {
+          key: "c",
+          handler: fjord.string().nullable()
+        }
+      ])
+    ).to.be.false;
+  });
+
   it("Check array member types", async () => {
     const fjord = new Fjord();
 

@@ -19,6 +19,7 @@ const isArray = (v: any) => Array.isArray(v);
 export abstract class FjordHandler {
   protected rules: RuleFunction<any>[] = [];
   protected m_optional = false;
+  protected m_nullable = false;
   protected m_default?: DefaultFunction | unknown;
 
   /**
@@ -39,6 +40,11 @@ export abstract class FjordHandler {
     }
     log(`  ${key} OK.`);
     return true;
+  }
+
+  nullable() {
+    this.m_nullable = true;
+    return this;
   }
 
   /**
@@ -66,6 +72,13 @@ export abstract class FjordHandler {
   }
 
   /**
+   * Returns whether the property is nullable
+   */
+  isNullable() {
+    return this.m_nullable;
+  }
+
+  /**
    * Checks if the property has a default value (only relevant when using optional)
    */
   hasDefault() {
@@ -88,13 +101,9 @@ export abstract class FjordHandler {
  * String factory
  */
 export class FjordString extends FjordHandler {
-  constructor(nullable?: boolean, err?: number | string) {
+  constructor(err?: number | string) {
     super();
-    if (nullable) {
-      this.rules.push(v => isString(v) || v === null || err || false);
-    } else {
-      this.rules.push(v => isString(v) || err || false);
-    }
+    this.rules.push(v => isString(v) || err || false);
   }
 
   /**
