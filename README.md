@@ -1,4 +1,5 @@
 [![npm version](https://badge.fury.io/js/%40dotvirus%2Ffjord.svg)](https://badge.fury.io/js/%40dotvirus%2Ffjord)
+[![Actions Status](https://github.com/dotvirus/fjord/workflows/Test/badge.svg)](https://github.com/dotvirus/fjord/actions)
 
 # fjord
 
