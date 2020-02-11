@@ -4,17 +4,19 @@
 
 # Install
 
-````
+```
 npm i @dotvirus/fjord
 ```
 
 ```javascript
 // Require
 const fjord = require("@dotvirus/fjord");
+```
 
+```typescript
 // Import
 import Fjord from "@dotvirus/fjord";
-````
+```
 
 # Basic usage
 
