@@ -140,7 +140,7 @@ export class FjordString extends FjordHandler {
    * @param max Maximum length
    * @param err String or number that will be returned on fail
    */
-  len(min: number, max: number, err: number | string) {
+  len(min: number, max: number, err?: number | string) {
     return this.min(min, err).max(max, err);
   }
 
@@ -312,6 +312,16 @@ export class FjordArray<T = any> extends FjordHandler {
     if (Array.isArray(func)) this.rules.push(...func);
     else this.rules.push(func);
     return this;
+  }
+
+  /**
+   * Checks the length of the array
+   * @param min Minimum length
+   * @param max Maximum length
+   * @param err String or number that will be returned on fail
+   */
+  len(min: number, max: number, err?: number | string) {
+    return this.min(min, err).max(max, err);
   }
 
   /**
