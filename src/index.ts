@@ -82,7 +82,7 @@ export interface IFjordOptions {
   onDefault: VoidFunction;
 }
 
-interface IValidationRule {
+export interface IValidationRule {
   /**
    * Object property
    */
