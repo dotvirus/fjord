@@ -230,8 +230,8 @@ export default class FjordInstance {
         log(`${rule.key} pre-transform(s)...`);
         for (const transformer of preTransforms) {
           tree.set(rule.key, await transformer(value, rule.key, root));
+          value = tree.get(rule.key);
         }
-        value = tree.get(rule.key);
       }
 
       log(`Checking rules for ${rule.key}...`);
@@ -251,8 +251,8 @@ export default class FjordInstance {
         log(`${rule.key} post-transform(s)...`);
         for (const transformer of postTransforms) {
           tree.set(rule.key, await transformer(value, rule.key, root));
+          value = tree.get(rule.key);
         }
-        value = tree.get(rule.key);
       }
 
       await this.runAfter(value, rule.key, root, rule.after);

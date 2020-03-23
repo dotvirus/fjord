@@ -19,7 +19,7 @@ import Fjord from "@dotvirus/fjord";
 # Basic usage
 
 ```javascript
-const fjord = new Fjord(/* opts */);
+const fjord = new Fjord();
 
 fjord
   .validate({ a: 2, b: 3 }, [
@@ -73,7 +73,7 @@ fjord
 # Custom error messages
 
 ```javascript
-const fjord = new Fjord(/* opts */);
+const fjord = new Fjord();
 
 fjord
   .validate({ a: "str" }, [
@@ -90,7 +90,7 @@ fjord
 # Connect-style middleware
 
 ```javascript
-const fjord = new Fjord(/* opts */);
+const fjord = new Fjord();
 
 app.get(
   "/",
@@ -113,7 +113,7 @@ app.get(
 # Koa-style middleware
 
 ```javascript
-const fjord = new Fjord(/* opts */);
+const fjord = new Fjord();
 
 app.get(
   "/",
@@ -161,7 +161,7 @@ fjord
 # Custom functions
 
 ```javascript
-const fjord = new Fjord(/* opts */);
+const fjord = new Fjord();
 
 // Example: Require all numbers to be even
 fjord
